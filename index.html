@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Manta Atelier · Maquete do dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#EEF0F6; --surface:#FFFFFF; --ink:#1B2347; --muted:#5B6385; --line:#D9DDEA;
+  --indigo:#27357A; --sky:#7C8FD6; --saffron:#D9941F; --teal:#2A8C80; --madder:#B7423B;
+  --chip-bad:#F6DEDC; --chip-warn:#F8EAC9; --chip-ok:#D5ECE8;
+  --font-head:"Bricolage Grotesque","Trebuchet MS",Arial,sans-serif;
+  --font-body:"Source Sans 3","Segoe UI",Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#12162B; --surface:#1B2140; --ink:#EEF0FA; --muted:#A5ADCF; --line:#2C3463;
+    --indigo:#93A3F2; --sky:#5A6BB8; --saffron:#EDB04A; --teal:#4FB5A7; --madder:#E27A72;
+    --chip-bad:#4A2A33; --chip-warn:#4A3D22; --chip-ok:#1F4A47;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12162B; --surface:#1B2140; --ink:#EEF0FA; --muted:#A5ADCF; --line:#2C3463;
+  --indigo:#93A3F2; --sky:#5A6BB8; --saffron:#EDB04A; --teal:#4FB5A7; --madder:#E27A72;
+  --chip-bad:#4A2A33; --chip-warn:#4A3D22; --chip-ok:#1F4A47;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.5}
+h1,h2,h3{font-family:var(--font-head);margin:0;line-height:1.2}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+.weave{height:10px;background:
+  repeating-linear-gradient(90deg,var(--indigo) 0 14px,var(--saffron) 14px 18px,var(--indigo) 18px 32px,var(--teal) 32px 36px);}
+header.top{background:var(--surface);border-bottom:1px solid var(--line)}
+.top-inner{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 18px;padding:16px 0 12px}
+.top h1{font-size:1.5rem;font-weight:700}
+.top .sub{color:var(--muted);font-size:.95rem}
+.badge{margin-left:auto;font-size:.85rem;background:var(--chip-warn);padding:4px 10px;border-radius:999px;font-weight:600}
+.filters{display:flex;flex-wrap:wrap;gap:10px;padding:0 0 8px;align-items:flex-end}
+.filters label{display:flex;flex-direction:column;font-size:.8rem;color:var(--muted);gap:2px}
+.filters select{font:inherit;font-size:.95rem;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 10px;min-width:150px}
+.filters select:disabled{opacity:.45;cursor:not-allowed}
+.filters .clear{font:inherit;font-size:.9rem;font-weight:600;color:var(--indigo);background:transparent;border:1px solid var(--line);border-radius:6px;padding:6px 12px;cursor:pointer}
+.fnote{font-size:.85rem;color:var(--muted);padding:0 0 12px;min-height:1.6em}
+nav.tabs{display:flex;gap:4px;overflow-x:auto;padding:4px 0 0;margin-bottom:-1px}
+nav.tabs button{font:inherit;font-weight:600;font-size:.95rem;white-space:nowrap;color:var(--muted);background:transparent;border:1px solid transparent;border-bottom:none;border-radius:8px 8px 0 0;padding:9px 14px;cursor:pointer}
+nav.tabs button[aria-selected="true"]{color:var(--ink);background:var(--bg);border-color:var(--line)}
+nav.tabs button:focus-visible,.filters select:focus-visible,.filters .clear:focus-visible{outline:3px solid var(--saffron);outline-offset:2px}
+main{padding:24px 0 48px}
+.page{display:none}
+.page.active{display:block}
+.page-head{margin-bottom:18px}
+.page-head h2{font-size:1.4rem}
+.page-head p{margin:4px 0 0;color:var(--muted);max-width:70ch}
+.grid{display:grid;gap:16px}
+.kpis{grid-template-columns:repeat(auto-fit,minmax(210px,1fr));margin-bottom:16px}
+.cols-2{grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px;min-width:0}
+.card h3{font-size:1rem;margin-bottom:2px}
+.card .q{color:var(--muted);font-size:.88rem;margin:0 0 12px}
+.kpi .label{color:var(--muted);font-size:.9rem}
+.kpi .value{font-family:var(--font-head);font-weight:700;font-size:2rem;line-height:1.1;margin:2px 0 4px}
+.kpi .meta{font-size:.85rem;color:var(--muted)}
+.kpi svg{display:block;width:100%;height:34px;margin-top:8px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;font-weight:600;border-radius:999px;padding:2px 10px;margin-top:6px}
+.chip::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+.chip.bad{background:var(--chip-bad);color:var(--madder)}
+.chip.warn{background:var(--chip-warn);color:var(--saffron)}
+.chip.ok{background:var(--chip-ok);color:var(--teal)}
+.chart svg{width:100%;height:auto;display:block}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.85rem;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:baseline}
+.hbar{display:grid;grid-template-columns:120px 1fr 72px;align-items:center;gap:10px;margin:8px 0;font-size:.92rem}
+.hbar.wide{grid-template-columns:170px 1fr 72px}
+.hbar .track{background:var(--bg);border-radius:4px;height:16px;overflow:hidden}
+.hbar .fill{height:100%;border-radius:4px}
+.hbar .num{text-align:right;font-variant-numeric:tabular-nums}
+.table-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-weight:600;color:var(--muted);font-size:.85rem}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+.funnel{display:flex;flex-direction:column;gap:6px}
+.funnel .step{display:flex;align-items:center;gap:12px}
+.funnel .bar{height:38px;border-radius:4px;background:var(--indigo);color:#fff;display:flex;align-items:center;padding:0 12px;font-weight:600;font-size:.9rem;white-space:nowrap}
+:root[data-theme="dark"] .funnel .bar{color:#12162B}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .funnel .bar{color:#12162B}}
+.funnel .rate{font-size:.85rem;color:var(--muted);min-width:110px}
+.empty{border:1px dashed var(--line);border-radius:8px;padding:18px;color:var(--muted);font-size:.95rem}
+.empty strong{color:var(--ink)}
+.cut{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cut .box{background:var(--bg);border-radius:8px;padding:12px 14px}
+.cut .box b{font-family:var(--font-head);font-size:1.6rem;display:block}
+.cut .box small{color:var(--muted);font-size:.85rem}
+.note{font-size:.85rem;color:var(--muted);margin-top:10px}
+footer{color:var(--muted);font-size:.85rem;padding-bottom:28px}
+@media (max-width:560px){
+  .hbar{grid-template-columns:90px 1fr 60px}
+  .hbar.wide{grid-template-columns:110px 1fr 66px}
+  .badge{margin-left:0}
+}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="weave" aria-hidden="true"></div>
+<header class="top">
+  <div class="wrap">
+    <div class="top-inner">
+      <h1>Manta Atelier</h1>
+      <span class="sub">Painel de acompanhamento de growth</span>
+      <span class="badge">Maquete · dados simulados</span>
+    </div>
+    <div class="filters" role="group" aria-label="Filtros globais">
+      <label>Período
+        <select id="f-per">
+          <option value="all">Abr–Set 2026 (6 meses)</option>
+          <option value="last3">Últimos 3 meses (Jul–Set)</option>
+          <option value="first3">Primeiros 3 meses (Abr–Jun)</option>
+        </select></label>
+      <label>Canal
+        <select id="f-canal">
+          <option value="all">Todos os canais</option>
+          <option value="ig">Instagram</option>
+          <option value="tt">TikTok</option>
+          <option value="org">Pesquisa orgânica</option>
+          <option value="dir">Direto</option>
+          <option value="out">Referências e outros</option>
+        </select></label>
+      <label>Dispositivo
+        <select id="f-disp">
+          <option value="all">Todos</option>
+          <option value="mob">Mobile</option>
+          <option value="desk">Desktop</option>
+        </select></label>
+      <label>Categoria
+        <select id="f-cat">
+          <option value="all">Todas</option>
+          <option value="acc">Acessórios</option>
+          <option value="dec">Decoração</option>
+          <option value="ves">Vestuário</option>
+          <option value="per">Personalização e cartões-presente</option>
+        </select></label>
+      <button type="button" class="clear" id="f-clear">Limpar filtros</button>
+    </div>
+    <div class="fnote" id="fnote" aria-live="polite"></div>
+    <nav class="tabs" role="tablist" aria-label="Páginas do dashboard">
+      <button role="tab" aria-selected="true" data-target="p1">Visão geral</button>
+      <button role="tab" aria-selected="false" data-target="p2">Canais</button>
+      <button role="tab" aria-selected="false" data-target="p3">Funil</button>
+      <button role="tab" aria-selected="false" data-target="p4">Pesquisa orgânica</button>
+      <button role="tab" aria-selected="false" data-target="p5">Clientes</button>
+      <button role="tab" aria-selected="false" data-target="p6">Produtos</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+<div class="wrap">
+
+<section class="page active" id="p1">
+  <div class="page-head">
+    <h2>Visão geral</h2>
+    <p>Estamos a chegar às metas dos próximos 6 meses? Os indicadores principais, lado a lado com o objetivo.</p>
+  </div>
+  <div class="grid kpis" id="kpis-main"></div>
+  <div class="grid kpis" id="kpis-extra"></div>
+  <div class="grid cols-2">
+    <div class="card chart"><h3>Receita por mês</h3><p class="q">Quanto vendemos em cada mês?</p><div id="c-receita"></div></div>
+    <div class="card chart"><h3>Encomendas por mês</h3><p class="q">O número de compras está a crescer?</p><div id="c-enc"></div></div>
+  </div>
+</section>
+
+<section class="page" id="p2">
+  <div class="page-head">
+    <h2>Canais</h2>
+    <p>Que canais trazem mais visitas e quais convertem melhor? Perguntas 1 e 7 da análise.</p>
+  </div>
+  <div class="grid cols-2">
+    <div class="card"><h3>Sessões e encomendas por canal</h3><p class="q">Peso de cada canal no tráfego e nas vendas</p><div id="ch-bars"></div>
+      <div class="legend"><span><i style="background:var(--sky)"></i>% das sessões</span><span><i style="background:var(--indigo)"></i>% das encomendas</span></div></div>
+    <div class="card"><h3>Taxa de conversão por canal</h3><p class="q">Quem converte acima da média?</p><div class="table-wrap"><table id="ch-table"></table></div></div>
+  </div>
+  <div class="grid cols-2" style="margin-top:16px">
+    <div class="card chart"><h3>Sessões por canal, mês a mês</h3><p class="q">A dependência do Instagram está a diminuir?</p><div id="c-canais"></div><div class="legend" id="l-canais"></div></div>
+    <div class="card"><h3>Campanhas pagas (UTM)</h3><p class="q">Que anúncios devolvem mais do que custam?</p><div class="table-wrap"><table id="camp-table"></table></div>
+      <p class="note">Esta tabela aplica o período e o canal; não se divide por dispositivo.</p></div>
+  </div>
+</section>
+
+<section class="page" id="p3">
+  <div class="page-head">
+    <h2>Funil e comportamento</h2>
+    <p>Em que fase perdemos mais visitantes, e porque é que o abandono é tão alto em telemóvel? Perguntas 2 e 3.</p>
+  </div>
+  <div class="grid cols-2">
+    <div class="card"><h3>Funil de conversão</h3><p class="q" id="funil-sub">Da visita à compra</p><div class="funnel" id="funil"></div><p class="note">A largura das barras é ilustrativa; os valores são os da simulação.</p></div>
+    <div class="card"><h3>Mobile vs. desktop</h3><p class="q">Compara sempre os dois dispositivos (aplica período e canal)</p>
+      <div class="cut" id="device"></div>
+      <div id="device-bars" style="margin-top:14px"></div></div>
+  </div>
+  <div class="card" style="margin-top:16px"><h3>Páginas com mais saídas</h3><p class="q">Onde os visitantes desistem</p><div class="table-wrap"><table id="exit-table"></table></div>
+    <p class="note">Esta tabela mostra sempre o período completo.</p></div>
+</section>
+
+<section class="page" id="p4">
+  <div class="page-head">
+    <h2>Pesquisa orgânica</h2>
+    <p>Que páginas atraem visitas vindas do Google e quais têm potencial por explorar? Pergunta 4.</p>
+  </div>
+  <div class="grid kpis" id="kpis-seo"></div>
+  <div class="grid cols-2">
+    <div class="card chart"><h3>Sessões orgânicas por mês</h3><p class="q">Rumo à meta de +30%</p><div id="c-org"></div></div>
+    <div class="card"><h3>Palavras-chave</h3><p class="q">Muitas impressões e pouco clique são oportunidades</p><div class="table-wrap"><table id="kw-table"></table></div>
+      <p class="note">Esta tabela mostra sempre o período completo.</p></div>
+  </div>
+</section>
+
+<section class="page" id="p5">
+  <div class="page-head">
+    <h2>Clientes e retenção</h2>
+    <p>Com que frequência os clientes voltam a comprar? Pergunta 5.</p>
+  </div>
+  <div class="grid kpis" id="kpis-ret"></div>
+  <div class="grid cols-2">
+    <div class="card chart"><h3>Clientes novos e recorrentes</h3><p class="q">Encomendas por mês, por tipo de cliente</p><div id="c-ret"></div>
+      <div class="legend"><span><i style="background:var(--sky)"></i>Novos</span><span><i style="background:var(--saffron)"></i>Recorrentes</span></div></div>
+    <div class="card"><h3>Valor médio da encomenda</h3><p class="q">Quanto vale cada tipo de cliente?</p><div id="aov"></div>
+      <p class="note">Os recorrentes gastam mais 35% por encomenda.</p></div>
+  </div>
+  <div class="card" style="margin-top:16px"><h3>E-mail marketing</h3><p class="q">Aberturas, cliques e subscritores</p>
+    <div class="empty"><strong>Ainda sem dados.</strong> A newsletter está prevista para a fase 2 do tracking. Quando existir, ligue a ferramenta de e-mail ao dashboard para ver aqui as taxas de abertura e de clique.</div></div>
+</section>
+
+<section class="page" id="p6">
+  <div class="page-head">
+    <h2>Produtos e receita</h2>
+    <p>Que categorias e produtos geram mais receita? Pergunta 6.</p>
+  </div>
+  <div class="grid cols-2">
+    <div class="card"><h3>Receita por categoria</h3><p class="q" id="cat-sub">Peso de cada categoria na receita</p><div id="cat-bars"></div></div>
+    <div class="card"><h3>Produtos em destaque</h3><p class="q">Do interesse à venda</p><div class="table-wrap"><table id="prod-table"></table></div></div>
+  </div>
+</section>
+
+<footer>Maquete de proposta de dashboard (Looker Studio) para o projeto da Manta Atelier, uma entidade fictícia. Todos os valores são simulados. Os filtros recalculam os números da maquete; no Looker Studio real fariam o mesmo sobre os dados ligados.</footer>
+</div>
+</main>
+
+<script>
+(function(){
+var fmt=function(n,d){return Number(n).toLocaleString('pt-PT',{minimumFractionDigits:d||0,maximumFractionDigits:d||0});};
+var meses=['Abr','Mai','Jun','Jul','Ago','Set'];
+var enc=[100,108,116,124,132,140];
+var rec=[4210,4546,4884,5220,5560,5892];
+var org=[1000,1100,1150,1250,1300,1400];
+var recorr=[14,16,17,19,20,22];
+var impr=org.map(function(v){return 380000*v/7200;});
+var posic=[19,18.5,18,18,17.5,17];
+
+var CHK=['ig','tt','org','dir','out'];
+var CHN={ig:'Instagram',tt:'TikTok',org:'Pesquisa orgânica',dir:'Direto',out:'Referências e outros'};
+var CHC={ig:'var(--indigo)',tt:'var(--madder)',org:'var(--teal)',dir:'var(--saffron)',out:'var(--sky)'};
+var MS={
+  ig:[4700,5100,5400,5700,6000,6100],
+  tt:[1200,1350,1450,1550,1700,1750],
+  org:org,
+  dir:[800,850,900,950,950,950],
+  out:[800,800,900,850,950,1100]
+};
+var SC={ig:{mob:26730,desk:6270},tt:{mob:8550,desk:450},org:{mob:3600,desk:3600},dir:{mob:2160,desk:3240},out:{mob:2160,desk:3240}};
+var OC={ig:{mob:200,desk:97},tt:{mob:48,desk:6},org:{mob:58,desk:86},dir:{mob:46,desk:84},out:{mob:37,desk:58}};
+var SCT={};CHK.forEach(function(c){SCT[c]=SC[c].mob+SC[c].desk;});
+var CR={mob:5,desk:935/331};
+var PER={all:[0,1,2,3,4,5],last3:[3,4,5],first3:[0,1,2]};
+var CAT={
+  acc:{n:'Acessórios',o:290,r:12125},
+  dec:{n:'Decoração',o:190,r:9094},
+  ves:{n:'Vestuário',o:150,r:6668},
+  per:{n:'Personalização e cartões-presente',o:90,r:2425}
+};
+var CATK=['acc','dec','ves','per'];
+var CATC={acc:'var(--indigo)',dec:'var(--teal)',ves:'var(--saffron)',per:'var(--sky)'};
+
+var S={per:'all',canal:'all',disp:'all',cat:'all'};
+var APPLIES={
+  p1:{per:1,canal:1,disp:1,cat:1},
+  p2:{per:1,canal:1,disp:1,cat:0},
+  p3:{per:1,canal:1,disp:1,cat:0},
+  p4:{per:1,canal:0,disp:0,cat:0},
+  p5:{per:1,canal:1,disp:1,cat:0},
+  p6:{per:1,canal:1,disp:1,cat:1}
+};
+var FNAMES={per:'Período',canal:'Canal',disp:'Dispositivo',cat:'Categoria'};
+var activePage='p1';
+
+function eff(p){var a=APPLIES[p];return {per:a.per?S.per:'all',canal:a.canal?S.canal:'all',disp:a.disp?S.disp:'all',cat:a.cat?S.cat:'all'};}
+function sum(a){return a.reduce(function(x,y){return x+y;},0);}
+function put(id,html){document.getElementById(id).innerHTML=html;}
+function labelsOf(ms){return ms.map(function(m){return meses[m];});}
+
+/* Cálculo central: soma células canal x dispositivo, mês a mês */
+function agg(st){
+  var ms=PER[st.per];
+  var o={m:ms,sess:[],ord:[],rev:[],rec:[],cart:[],chk:[],view:[]};
+  ms.forEach(function(m){
+    var s=0,od=0,ca=0,ck=0,vw=0;
+    CHK.forEach(function(c){
+      if(st.canal!=='all'&&st.canal!==c)return;
+      ['mob','desk'].forEach(function(d){
+        if(st.disp!=='all'&&st.disp!==d)return;
+        var cs=SC[c][d]/SCT[c]*MS[c][m];
+        var oo=OC[c][d]*enc[m]/720;
+        s+=cs;od+=oo;ca+=oo*CR[d];ck+=oo*2;vw+=cs*0.55;
+      });
+    });
+    var f=1,fr=1;
+    if(st.cat!=='all'){f=CAT[st.cat].o/720;fr=CAT[st.cat].r/30312;}
+    o.sess.push(s);
+    o.ord.push(od*f);
+    o.rev.push(od*rec[m]/enc[m]*fr);
+    o.rec.push(od*f*recorr[m]/enc[m]);
+    o.cart.push(ca);o.chk.push(ck);o.view.push(vw);
+  });
+  return o;
+}
+
+/* Gráficos */
+function niceAxis(v){
+  if(v<=0)return {step:1,max:4};
+  var raw=v*1.05/4,p=Math.pow(10,Math.floor(Math.log(raw)/Math.LN10)),c=[1,2,2.5,5,10],step=p*10;
+  for(var i=0;i<c.length;i++){if(c[i]*p>=raw){step=c[i]*p;break;}}
+  return {step:step,max:step*4};
+}
+function axisGrid(w,h,pad,max){
+  var s='';
+  for(var i=0;i<=4;i++){
+    var y=pad.t+(h-pad.t-pad.b)*(1-i/4);
+    s+='<line x1="'+pad.l+'" x2="'+(w-pad.r)+'" y1="'+y+'" y2="'+y+'" stroke="var(--line)" stroke-width="1"/>';
+    s+='<text x="'+(pad.l-8)+'" y="'+(y+4)+'" text-anchor="end" font-size="11" fill="var(--muted)">'+fmt(max*i/4)+'</text>';
+  }
+  return s;
+}
+function lineChart(id,labels,series,label){
+  var w=560,h=240,pad={l:52,r:16,t:12,b:28},n=labels.length;
+  var mx=0;series.forEach(function(se){mx=Math.max(mx,Math.max.apply(null,se.values));});
+  var max=niceAxis(mx).max,plotW=w-pad.l-pad.r,plotH=h-pad.t-pad.b;
+  var s='<svg viewBox="0 0 '+w+' '+h+'" role="img" aria-label="'+label+'">'+axisGrid(w,h,pad,max);
+  labels.forEach(function(m,i){
+    var x=pad.l+i*(plotW/(n-1));
+    s+='<text x="'+x+'" y="'+(h-8)+'" text-anchor="middle" font-size="11" fill="var(--muted)">'+m+'</text>';
+  });
+  series.forEach(function(se){
+    var pts=se.values.map(function(v,i){return (pad.l+i*(plotW/(n-1))).toFixed(1)+','+(pad.t+plotH*(1-v/max)).toFixed(1);});
+    s+='<polyline points="'+pts.join(' ')+'" fill="none" stroke="'+se.color+'" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>';
+    pts.forEach(function(p){var q=p.split(',');s+='<circle cx="'+q[0]+'" cy="'+q[1]+'" r="3.5" fill="'+se.color+'"/>';});
+  });
+  put(id,s+'</svg>');
+}
+function colChart(id,labels,stacks,label){
+  var w=560,h=240,pad={l:52,r:16,t:12,b:28},n=labels.length;
+  var tot=labels.map(function(l,i){return sum(stacks.map(function(st){return st.values[i];}));});
+  var max=niceAxis(Math.max.apply(null,tot)).max,plotW=w-pad.l-pad.r,plotH=h-pad.t-pad.b,slot=plotW/n,bw=slot*0.5;
+  var s='<svg viewBox="0 0 '+w+' '+h+'" role="img" aria-label="'+label+'">'+axisGrid(w,h,pad,max);
+  labels.forEach(function(m,i){
+    var x=pad.l+i*slot+(slot-bw)/2,acc=0;
+    stacks.forEach(function(st){
+      var v=st.values[i],bh=plotH*v/max,y=pad.t+plotH-plotH*acc/max-bh;
+      s+='<rect x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+Math.max(bh,0).toFixed(1)+'" fill="'+st.color+'" rx="2"/>';
+      acc+=v;
+    });
+    s+='<text x="'+(pad.l+i*slot+slot/2).toFixed(1)+'" y="'+(h-8)+'" text-anchor="middle" font-size="11" fill="var(--muted)">'+m+'</text>';
+  });
+  put(id,s+'</svg>');
+}
+function spark(vals){
+  var w=200,h=34,min=Math.min.apply(null,vals),max=Math.max.apply(null,vals),r=(max-min)||1;
+  var pts=vals.map(function(v,i){return (i*(w/(vals.length-1))).toFixed(1)+','+(h-4-((v-min)/r)*(h-8)).toFixed(1);}).join(' ');
+  return '<svg viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none" role="img" aria-label="Evolução mensal"><polyline points="'+pts+'" fill="none" stroke="var(--indigo)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>';
+}
+function kpi(o){
+  return '<div class="card kpi"><div class="label">'+o.label+'</div><div class="value">'+o.value+'</div>'+
+    (o.meta?'<div class="meta">'+o.meta+'</div>':'')+
+    (o.chip?'<span class="chip '+o.chip[0]+'">'+o.chip[1]+'</span>':'')+
+    (o.spark?spark(o.spark):'')+'</div>';
+}
+function hbars(rows,wide){
+  return rows.map(function(r){
+    return '<div class="hbar'+(wide?' wide':'')+'"><span>'+r.l+'</span><div class="track"><div class="fill" style="width:'+Math.max(r.w,0).toFixed(1)+'%;background:'+r.c+';opacity:'+(r.o===undefined?1:r.o)+'"></div></div><span class="num">'+r.t+'</span></div>';
+  }).join('');
+}
+function chipConv(v){return v>=1.8?['ok','Na meta']:v>=1.4?['warn','A aproximar-se']:['bad','Abaixo da meta'];}
+function chipAb(v){return v<=67?['ok','Na meta']:v<=72?['warn','A aproximar-se']:['bad','Acima da meta'];}
+function chipRec(v){return v>=22?['ok','Na meta']:v>=18?['warn','A aproximar-se']:['bad','Abaixo da meta'];}
+function ratioArr(a,b){return a.map(function(v,i){return b[i]?v/b[i]*100:0;});}
+
+/* Página 1 */
+function renderP1(){
+  var st=eff('p1'),a=agg(st),lab=labelsOf(a.m),catOn=st.cat!=='all';
+  var sess=sum(a.sess),ord=sum(a.ord),rv=sum(a.rev),rc=sum(a.rec),cart=sum(a.cart);
+  var conv=ord/sess*100,ab=(1-sum(a.ord)/cart)*100,pr=rc/ord*100;
+  var full=st.per==='all';
+  var orgOk=(st.canal==='all'||st.canal==='org');
+  var orgSess=sum(a.m.map(function(m){return org[m]*(st.disp==='all'?1:0.5);}));
+  var nd='Não se aplica por categoria';
+  put('kpis-main',[
+    kpi({label:'Taxa de conversão',value:catOn?'—':fmt(conv,1)+'%',meta:catOn?nd:'Meta: 2,0% em 6 meses',chip:catOn?null:chipConv(conv),spark:catOn?null:ratioArr(a.ord,a.sess)}),
+    kpi({label:'Abandono de carrinho',value:catOn?'—':fmt(ab,0)+'%',meta:catOn?nd:'Meta: 65% em 6 meses',chip:catOn?null:chipAb(ab)}),
+    kpi({label:'Clientes recorrentes',value:fmt(pr,0)+'%',meta:'Meta: 25% em 6 meses',chip:chipRec(pr),spark:ratioArr(a.rec,a.ord)}),
+    kpi({label:'Sessões orgânicas',value:(orgOk&&!catOn)?fmt(orgSess):'—',meta:catOn?nd:(!orgOk?'Só se aplica à pesquisa orgânica':(full?'Meta: +30% (cerca de 9 360)':'Meta de +30% avaliada aos 6 meses')),chip:(orgOk&&!catOn&&full)?['bad','Abaixo da meta']:null,spark:(orgOk&&!catOn)?a.m.map(function(m){return org[m];}):null})
+  ].join(''));
+  put('kpis-extra',[
+    kpi({label:'Receita total',value:fmt(Math.round(rv))+' €',meta:full?'Abr–Set 2026':(st.per==='last3'?'Jul–Set 2026':'Abr–Jun 2026'),spark:a.rev}),
+    kpi({label:'Encomendas',value:fmt(Math.round(ord)),meta:catOn?'Com produtos da categoria':fmt(Math.round(sess))+' sessões',spark:a.ord}),
+    kpi({label:'Valor médio da encomenda',value:fmt(rv/ord,2)+' €',meta:catOn?'Na categoria':'Todos os clientes',spark:a.rev.map(function(v,i){return v/a.ord[i];})}),
+    kpi({label:'Receita por sessão',value:catOn?'—':fmt(rv/sess,2)+' €',meta:catOn?nd:fmt(Math.round(rv))+' € / '+fmt(Math.round(sess))+' sessões'})
+  ].join(''));
+  colChart('c-receita',lab,[{values:a.rev,color:'var(--indigo)'}],'Receita mensal em euros');
+  colChart('c-enc',lab,[{values:a.ord,color:'var(--teal)'}],'Encomendas mensais');
+}
+
+/* Página 2 */
+function renderP2(){
+  var b=eff('p2'),per={},tS=0,tO=0;
+  CHK.forEach(function(c){per[c]=agg({per:b.per,canal:c,disp:b.disp,cat:'all'});tS+=sum(per[c].sess);tO+=sum(per[c].ord);});
+  var shown=b.canal==='all'?CHK:[b.canal];
+  put('ch-bars',shown.map(function(c){
+    var s=sum(per[c].sess),o=sum(per[c].ord);
+    var ps=tS?s/tS*100:0,po=tO?o/tO*100:0;
+    return '<div style="margin:10px 0 14px"><div style="font-size:.92rem;margin-bottom:4px">'+CHN[c]+'</div>'+
+      hbars([{l:'Sessões',w:ps,c:'var(--sky)',t:fmt(ps,0)+'%'},{l:'Encomendas',w:po,c:'var(--indigo)',t:fmt(po,0)+'%'}])+'</div>';
+  }).join(''));
+  var avg=tO/tS*100,sS=0,sO=0;
+  var rows=shown.map(function(c){
+    var s=sum(per[c].sess),o=sum(per[c].ord),cv=o/s*100;sS+=s;sO+=o;
+    var chip=cv>avg?'<span class="chip ok">Acima da média</span>':'<span class="chip bad">Abaixo da média</span>';
+    return '<tr><td>'+CHN[c]+'</td><td class="n">'+fmt(Math.round(s))+'</td><td class="n">'+fmt(Math.round(o))+'</td><td class="n">'+fmt(cv,1)+'%</td><td>'+chip+'</td></tr>';
+  }).join('');
+  put('ch-table','<thead><tr><th>Canal</th><th class="n">Sessões</th><th class="n">Encomendas</th><th class="n">Conversão</th><th></th></tr></thead><tbody>'+rows+
+    '<tr><td><b>'+(b.canal==='all'?'Total':'Seleção')+'</b></td><td class="n"><b>'+fmt(Math.round(sS))+'</b></td><td class="n"><b>'+fmt(Math.round(sO))+'</b></td><td class="n"><b>'+fmt(sO/sS*100,1)+'%</b></td><td></td></tr></tbody>');
+  var lab=labelsOf(PER[b.per]);
+  lineChart('c-canais',lab,shown.map(function(c){return {values:per[c].sess,color:CHC[c]};}),'Sessões mensais por canal');
+  put('l-canais',shown.map(function(c){return '<span><i style="background:'+CHC[c]+'"></i>'+CHN[c]+'</span>';}).join(''));
+  var pf=sum(PER[b.per].map(function(m){return enc[m];}))/720;
+  var camps=[
+    {n:'presentes_personalizados',o:'instagram / cpc',c:'ig',inv:380,cp:22,roas:'2,4'},
+    {n:'verao_reels',o:'instagram / cpc',c:'ig',inv:620,cp:31,roas:'2,1'},
+    {n:'bolsas_tiktok',o:'tiktok / cpc',c:'tt',inv:410,cp:14,roas:'1,4'}
+  ].filter(function(x){return b.canal==='all'||b.canal===x.c;});
+  put('camp-table','<thead><tr><th>Campanha</th><th>Origem / meio</th><th class="n">Investimento</th><th class="n">Compras</th><th class="n">ROAS</th></tr></thead><tbody>'+
+    (camps.length?camps.map(function(x){return '<tr><td>'+x.n+'</td><td>'+x.o+'</td><td class="n">'+fmt(Math.round(x.inv*pf))+' €</td><td class="n">'+fmt(Math.round(x.cp*pf))+'</td><td class="n">'+x.roas+'</td></tr>';}).join(''):'<tr><td colspan="5" style="white-space:normal;color:var(--muted)">Sem campanhas pagas neste canal. Só o Instagram e o TikTok têm anúncios.</td></tr>')+'</tbody>');
+}
+
+/* Página 3 */
+function renderP3(){
+  var b=eff('p3'),a=agg(b);
+  var sess=sum(a.sess),vw=sum(a.view),ct=sum(a.cart),ck=sum(a.chk),od=sum(a.ord);
+  var W=[100,68,44,28,18];
+  var steps=[
+    {n:'Sessões',v:sess,r:''},
+    {n:'Viram um produto',v:vw,r:fmt(vw/sess*100,0)+'% das sessões'},
+    {n:'Adicionaram ao carrinho',v:ct,r:fmt(ct/vw*100,1)+'% dos que viram'},
+    {n:'Iniciaram o checkout',v:ck,r:fmt(ck/ct*100,0)+'% dos carrinhos'},
+    {n:'Compraram',v:od,r:fmt(od/ck*100,0)+'% dos checkouts'}
+  ];
+  put('funil',steps.map(function(f,i){
+    return '<div class="step"><div class="bar" style="width:'+W[i]+'%;min-width:170px;opacity:'+(1-i*0.14).toFixed(2)+'">'+f.n+': '+fmt(Math.round(f.v))+'</div><span class="rate">'+f.r+'</span></div>';
+  }).join(''));
+  var tag=[];
+  if(b.canal!=='all')tag.push(CHN[b.canal]);
+  if(b.disp!=='all')tag.push(b.disp==='mob'?'Mobile':'Desktop');
+  put('funil-sub','Da visita à compra'+(tag.length?' · '+tag.join(', '):''));
+  var m=agg({per:b.per,canal:b.canal,disp:'mob',cat:'all'}),d=agg({per:b.per,canal:b.canal,disp:'desk',cat:'all'});
+  var ms=sum(m.sess),ds=sum(d.sess),mo=sum(m.ord),dO=sum(d.ord),mc=sum(m.cart),dc=sum(d.cart);
+  put('device','<div class="box"><span>Mobile</span><b>'+fmt(mo/ms*100,1)+'%</b><small>conversão · '+fmt(ms/(ms+ds)*100,0)+'% das sessões</small></div><div class="box"><span>Desktop</span><b>'+fmt(dO/ds*100,1)+'%</b><small>conversão · '+fmt(ds/(ms+ds)*100,0)+'% das sessões</small></div>');
+  var am=(1-mo/mc)*100,ad=(1-dO/dc)*100;
+  put('device-bars','<div style="font-size:.9rem;margin-bottom:2px">Abandono de carrinho</div>'+
+    hbars([{l:'Mobile',w:am,c:'var(--madder)',t:fmt(am,0)+'%'},{l:'Desktop',w:ad,c:'var(--teal)',t:fmt(ad,0)+'%'}]));
+  put('exit-table','<thead><tr><th>Página</th><th>Fase</th><th class="n">Taxa de saída</th><th></th></tr></thead><tbody>'+
+    '<tr><td>/carrinho</td><td>Consideração</td><td class="n">50%</td><td><span class="chip bad">Prioridade</span></td></tr>'+
+    '<tr><td>/checkout/envio</td><td>Consideração</td><td class="n">34%</td><td><span class="chip bad">Prioridade</span></td></tr>'+
+    '<tr><td>/produto/bolsa-tote-bordada</td><td>Interação</td><td class="n">58%</td><td><span class="chip warn">Rever</span></td></tr>'+
+    '<tr><td>/colecao/decoracao</td><td>Visita</td><td class="n">47%</td><td><span class="chip warn">Rever</span></td></tr></tbody>');
+}
+
+/* Página 4 */
+function renderP4(){
+  var b=eff('p4'),ms=PER[b.per],full=b.per==='all';
+  var os=sum(ms.map(function(m){return org[m];})),im=sum(ms.map(function(m){return impr[m];}));
+  var pos=sum(ms.map(function(m){return posic[m];}))/ms.length;
+  put('kpis-seo',[
+    kpi({label:'Sessões orgânicas',value:fmt(os),meta:full?'Meta: +30%':'Meta de +30% avaliada aos 6 meses',chip:full?['bad','Abaixo da meta']:null,spark:ms.map(function(m){return org[m];})}),
+    kpi({label:'Impressões',value:fmt(Math.round(im)),meta:'No Google'}),
+    kpi({label:'Taxa de cliques (CTR)',value:fmt(os/im*100,1)+'%',meta:'Média das páginas'}),
+    kpi({label:'Posição média',value:fmt(pos,0),meta:pos>=10?'Segunda página do Google':'Primeira página do Google',chip:['warn','Margem para subir'],spark:ms.map(function(m){return -posic[m];})})
+  ].join(''));
+  lineChart('c-org',labelsOf(ms),[{values:ms.map(function(m){return org[m];}),color:'var(--teal)'}],'Sessões orgânicas mensais');
+  put('kw-table','<thead><tr><th>Palavra-chave</th><th class="n">Impressões</th><th class="n">CTR</th><th class="n">Posição</th><th></th></tr></thead><tbody>'+
+    '<tr><td>bolsa artesanal</td><td class="n">41 000</td><td class="n">2,4%</td><td class="n">12</td><td></td></tr>'+
+    '<tr><td>presente personalizado</td><td class="n">33 000</td><td class="n">0,9%</td><td class="n">21</td><td><span class="chip warn">Oportunidade</span></td></tr>'+
+    '<tr><td>almofadas feitas à mão</td><td class="n">28 000</td><td class="n">1,1%</td><td class="n">19</td><td><span class="chip warn">Oportunidade</span></td></tr>'+
+    '<tr><td>mantas artesanais</td><td class="n">19 000</td><td class="n">1,6%</td><td class="n">15</td><td></td></tr>'+
+    '<tr><td>cestos decorativos artesanais</td><td class="n">12 000</td><td class="n">2,8%</td><td class="n">11</td><td></td></tr></tbody>');
+}
+
+/* Página 5 */
+function renderP5(){
+  var b=eff('p5'),a=agg(b),lab=labelsOf(a.m);
+  var od=sum(a.ord),rc=sum(a.rec),nv=od-rc,pr=rc/od*100;
+  var share=54*rc/(54*rc+40*nv)*100;
+  put('kpis-ret',[
+    kpi({label:'Clientes recorrentes',value:fmt(pr,0)+'%',meta:'Meta: 25%',chip:chipRec(pr),spark:ratioArr(a.rec,a.ord)}),
+    kpi({label:'Encomendas de recorrentes',value:fmt(Math.round(rc)),meta:'De '+fmt(Math.round(od))+' encomendas',spark:a.rec}),
+    kpi({label:'Valor médio, recorrentes',value:'54 €',meta:'Novos: 40 €'}),
+    kpi({label:'Receita de recorrentes',value:fmt(share,0)+'%',meta:'Com '+fmt(pr,0)+'% das encomendas'})
+  ].join(''));
+  colChart('c-ret',lab,[{values:a.ord.map(function(v,i){return v-a.rec[i];}),color:'var(--sky)'},{values:a.rec,color:'var(--saffron)'}],'Encomendas por mês de clientes novos e recorrentes');
+  put('aov',hbars([{l:'Novos',w:74,c:'var(--sky)',t:'40 €'},{l:'Recorrentes',w:100,c:'var(--saffron)',t:'54 €'}]));
+}
+
+/* Página 6 */
+function renderP6(){
+  var b=eff('p6'),a=agg({per:b.per,canal:b.canal,disp:b.disp,cat:'all'});
+  var tr=sum(a.rev),f=sum(a.ord)/720;
+  put('cat-sub','Peso de cada categoria nos '+fmt(Math.round(tr))+' € do período');
+  var vals=CATK.map(function(k){return tr*CAT[k].r/30312;}),mx=Math.max.apply(null,vals);
+  put('cat-bars',hbars(CATK.map(function(k,i){
+    return {l:CAT[k].n,w:vals[i]/mx*100,c:CATC[k],t:fmt(Math.round(vals[i]))+' €',o:(b.cat==='all'||b.cat===k)?1:0.25};
+  }),true));
+  var P=[
+    {n:'Bolsa tote bordada',c:'acc',v:5200,k:390,s:98},
+    {n:'Almofada tecida índigo',c:'dec',v:3900,k:310,s:71},
+    {n:'Manta de algodão',c:'dec',v:3100,k:260,s:64},
+    {n:'Lenço estampado',c:'acc',v:2800,k:190,s:55},
+    {n:'Vestido wrap, edição limitada',c:'ves',v:2400,k:170,s:47},
+    {n:'Cartão-presente',c:'per',v:1600,k:150,s:52}
+  ].filter(function(p){return b.cat==='all'||b.cat===p.c;});
+  put('prod-table','<thead><tr><th>Produto</th><th class="n">Visualizações</th><th class="n">Carrinhos</th><th class="n">Vendas</th></tr></thead><tbody>'+
+    P.map(function(p){return '<tr><td>'+p.n+'</td><td class="n">'+fmt(Math.round(p.v*f))+'</td><td class="n">'+fmt(Math.round(p.k*f))+'</td><td class="n">'+fmt(Math.round(p.s*f))+'</td></tr>';}).join('')+'</tbody>');
+}
+
+/* Filtros */
+var sel={per:document.getElementById('f-per'),canal:document.getElementById('f-canal'),disp:document.getElementById('f-disp'),cat:document.getElementById('f-cat')};
+function syncFilters(){
+  var a=APPLIES[activePage],names=[];
+  Object.keys(sel).forEach(function(k){
+    sel[k].disabled=!a[k];
+    if(a[k])names.push(FNAMES[k]);
+  });
+  var txt=names.length===1?names[0]:names.slice(0,-1).join(', ')+' e '+names[names.length-1];
+  document.getElementById('fnote').textContent='Nesta página aplicam-se: '+txt+'.'+(names.length<4?' Os restantes filtros ficam inativos.':'');
+}
+function renderAll(){renderP1();renderP2();renderP3();renderP4();renderP5();renderP6();}
+Object.keys(sel).forEach(function(k){
+  sel[k].addEventListener('change',function(){S[k]=sel[k].value;renderAll();});
+});
+document.getElementById('f-clear').addEventListener('click',function(){
+  Object.keys(sel).forEach(function(k){sel[k].value='all';S[k]='all';});
+  renderAll();
+});
+
+/* Separadores */
+var tabs=document.querySelectorAll('nav.tabs button');
+tabs.forEach(function(btn){
+  btn.addEventListener('click',function(){
+    tabs.forEach(function(t){t.setAttribute('aria-selected','false');});
+    btn.setAttribute('aria-selected','true');
+    document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+    activePage=btn.dataset.target;
+    document.getElementById(activePage).classList.add('active');
+    syncFilters();
+    window.scrollTo(0,0);
+  });
+});
+
+syncFilters();
+renderAll();
+})();
+</script>
+</body>
+</html>
